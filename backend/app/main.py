@@ -1,11 +1,20 @@
 from fastapi import FastAPI
+from app.core.config import settings
+from app.database.connection import engine
+from app.database.base import Base
+from app.models.user import User
+from app.api.auth import router as auth_router
+from app.models.ticket import Ticket
+from app.api.tickets import router as ticket_router
+Base.metadata.create_all(bind=engine)
 
 app = FastAPI(
-    title="AI Customer Support Platform",
-    description="Enterprise-grade AI-powered customer support platform",
-    version="1.0.0"
+    title=settings.APP_NAME,
+    version=settings.APP_VERSION
 )
 
+app.include_router(auth_router)
+app.include_router(ticket_router)
 
 @app.get("/", tags=["Root"])
 def root():
